@@ -1,0 +1,10 @@
+{"level":"info","ts":"2026-04-15T10:30:00Z","msg":"Server started","port":8080,"env":"production"}
+{"level":"info","ts":"2026-04-15T10:30:01Z","msg":"New connection","remote_addr":"192.168.1.100","user_id":"u123"}
+{"level":"warn","ts":"2026-04-15T10:30:02Z","msg":"Slow query detected","query_ms":1500,"db":"users"}
+{"level":"error","ts":"2026-04-15T10:30:03Z","msg":"Database connection failed","host":"db.internal","error":"connection refused"}
+{"level":"info","ts":"2026-04-15T10:30:04Z","msg":"Request completed","method":"GET","path":"/api/users","status":200,"duration_ms":45}
+{"level":"info","ts":"2026-04-15T10:30:05Z","msg":"Cache miss","key":"product:electronics:list"}
+{"level":"warn","ts":"2026-04-15T10:30:06Z","msg":"Rate limit approaching","ip":"192.168.1.105","requests":90,"limit":100}
+{"level":"error","ts":"2026-04-15T10:30:07Z","msg":"Unhandled exception","type":"NullPointerException","stack":"at com.app.UserService.getUser"}
+{"level":"info","ts":"2026-04-15T10:30:08Z","msg":"Deployment started","version":"v2.3.1","branch":"main"}
+{"level":"info","ts":"2026-04-15T10:30:09Z","msg":"Metrics exported","metrics":{"cpu":45.2,"mem":67.8,"requests":1234}}

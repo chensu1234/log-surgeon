@@ -1,0 +1,11 @@
+Apr 15 10:30:00 web01 sshd[1234]: Accepted publickey for deploy from 10.0.0.50 port 54321
+Apr 15 10:30:01 web01 kernel: [UFW BLOCK] IN=eth0 OUT= MAC=00:11:22:33:44:55 SRC=192.168.1.100 DST=10.0.0.1 LEN=60
+Apr 15 10:30:02 web01 nginx[5678]: 192.168.1.100 - GET /api/users 200 0.003
+Apr 15 10:30:03 web01 systemd[1]: Started Session 42 of user deploy.
+Apr 15 10:30:04 web01 sshd[1235]: Failed password for invalid user admin from 203.0.113.50 port 44567
+Apr 15 10:30:05 web01 nginx[5678]: 192.168.1.101 - POST /api/login 200 0.012
+Apr 15 10:30:06 web01 cron[789]: (root) CMD (/usr/local/bin/backup.sh)
+Apr 15 10:30:07 web01 kernel: [UFW ALLOW] IN=eth0 OUT= SRC=10.0.0.50 DST=192.168.1.100 LEN=60
+Apr 15 10:30:08 web01 nginx[5678]: 192.168.1.102 - GET /api/products 200 0.008
+Apr 15 10:30:09 web01 sshd[1236]: Connection closed by authenticating user backup 10.0.0.60 port 54322
+Apr 15 10:30:10 web01 systemd[1]: Stopped User Slice for UID 1000.
