@@ -1,0 +1,2 @@
+# log-surgeon dependencies
+# No external dependencies required - uses Python 3.8+ stdlib only

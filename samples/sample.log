@@ -1,0 +1,44 @@
+2026-04-16 08:00:01  [INFO]    Application started successfully on port 8080
+2026-04-16 08:00:02  [DEBUG]   Loading configuration from /etc/app/config.yaml
+2026-04-16 08:00:03  [INFO]    Database connection pool initialized: min=5, max=20
+2026-04-16 08:00:05  [INFO]    Cache service connected: redis://localhost:6379
+2026-04-16 08:01:10  [INFO]    192.168.1.100 - GET /api/v1/users 200 152ms
+2026-04-16 08:01:15  [INFO]    192.168.1.101 - GET /api/v1/products 200 89ms
+2026-04-16 08:02:30  [WARN]    High memory usage detected: 85% of 16GB
+2026-04-16 08:03:00  [ERROR]   Database query timeout: SELECT * FROM orders WHERE status='pending'
+2026-04-16 08:03:01  [ERROR]   Failed to send notification email: SMTP connection refused
+2026-04-16 08:03:45  [INFO]    10.0.0.50 - POST /api/v1/orders 201 234ms
+2026-04-16 08:04:12  [WARN]    Rate limit threshold reached for IP 192.168.1.200
+2026-04-16 08:05:00  [DEBUG]   Background job started: cleanup_expired_sessions
+2026-04-16 08:05:30  [INFO]    192.168.1.102 - DELETE /api/v1/cache 204 12ms
+2026-04-16 08:06:00  [FATAL]   Critical: Payment service unavailable - circuit breaker open
+2026-04-16 08:06:01  [ERROR]   Unhandled exception in worker thread: NullPointerException
+2026-04-16 08:06:15  [INFO]    Graceful shutdown initiated by SIGTERM
+2026-04-16 08:06:20  [INFO]    Waiting for 3 active connections to complete
+2026-04-16 08:06:25  [INFO]    All connections closed, exiting with code 0
+2026-04-16 08:30:00  [INFO]    Application started - version 2.4.1
+2026-04-16 08:30:01  [DEBUG]   Environment: production
+2026-04-16 08:30:05  [INFO]    MySQL connected: 10.0.1.20:3306
+2026-04-16 08:30:10  [INFO]    Starting HTTP server on 0.0.0.0:8080
+2026-04-16 08:31:00  [INFO]    172.16.0.10 - GET /health 200 2ms
+2026-04-16 08:32:00  [INFO]    172.16.0.11 - GET /api/metrics 200 15ms
+2026-04-16 08:33:00  [WARN]    Slow query detected (>1s): SELECT u.*, p.* FROM users u JOIN profiles p ON u.id=p.user_id
+2026-04-16 08:34:00  [ERROR]   Failed to authenticate user 'admin': Invalid credentials
+2026-04-16 08:35:00  [INFO]    10.0.0.1 - POST /api/auth/login 401 45ms
+2026-04-16 08:36:00  [DEBUG]   JWT token issued for user_id=12345
+2026-04-16 08:37:00  [INFO]    10.0.0.1 - POST /api/auth/login 200 120ms
+2026-04-16 08:38:00  [WARN]    Deprecated API endpoint accessed: /api/v1/legacy/users
+2026-04-16 08:39:00  [ERROR]   Payment processing failed: Card declined (code: insufficient_funds)
+2026-04-16 08:40:00  [INFO]    Scheduled backup started: full backup to /backup/daily
+2026-04-16 08:42:00  [INFO]    Backup completed: 2.3GB in 120s
+2026-04-16 08:43:00  [ERROR]   Kafka consumer lag warning: topic=orders partition=2 lag=15000
+2026-04-16 08:44:00  [INFO]    Kafka consumer rebalanced: assigned 3 partitions
+2026-04-16 08:45:00  [FATAL]   Out of memory: cannot allocate 512MB for image processing
+2026-04-16 08:45:30  [INFO]    Auto-scaling triggered: adding 2 new instances
+2026-04-16 08:46:00  [INFO]    New instance i-0abc123 registered: 10.0.2.50:8080
+2026-04-16 08:47:00  [INFO]    Load balancer updated: 5 active instances
+2026-04-16 08:48:00  [DEBUG]   GC completed: freed 1.2GB, took 850ms
+2026-04-16 08:49:00  [WARN]    Disk space low on /var/log: 85% used (45GB free)
+2026-04-16 08:50:00  [ERROR]   Failed to connect to S3: RequestTimeout after 30000ms
+2026-04-16 08:51:00  [INFO]    Retry scheduled: S3 upload will be retried in 60s (attempt 1/3)
+2026-04-16 08:52:00  [INFO]    S3 upload succeeded on retry

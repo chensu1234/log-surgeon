@@ -1,23 +1,22 @@
 # log-surgeon 🔍
 
-> Structured Log Parser & Analyzer — 将原始日志转换为结构化格式，支持字段提取、过滤与统计
+> 结构化日志分析与查询工具
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Shell](https://img.shields.io/badge/Shell-Bash-green.svg)](https://www.gnu.org/software/bash/)
-[![Platform](https://img.shields.io/badge/Platform-macOS%20|%20Linux-blue.svg)](https://www.gnu.org/software/bash/)
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux-green.svg)](https://github.com/)
 
-**log-surgeon** 是一个轻量级、结构化的日志解析与分析工具，可将 Nginx、Apache、Syslog、JSON 等格式的原始日志转换为结构化数据，支持字段过滤、实时监控与统计分析。
+一个强大且实用的日志分析工具，支持多格式解析、灵活过滤和统计分析。
 
 ## ✨ 特性
 
-- 🚀 **轻量级** — 纯 Bash 脚本，无外部依赖（仅需 `python3` 做 JSON 处理）
-- 📦 **多格式支持** — Nginx、Apache、Syslog (RFC 3164/5424)、JSON、CSV
-- 🔧 **自定义格式** — 通过配置文件定义任意正则解析规则
-- 🎯 **精确过滤** — 按字段名 + 正则表达式过滤，或按 HTTP 状态码筛选
-- 📊 **统计分析** — 按任意字段分组计数，输出 TopN 排名
-- 🖥️ **实时监控** — 支持 `tail -f` 风格实时解析日志流
-- 📤 **多格式输出** — JSON / CSV / Table / Raw
-- 🎨 **彩色输出** — 终端友好的彩色格式化
+- 🚀 支持多种日志格式：Syslog、JSON、Nginx、Apache、GLIBC、Custom
+- 🔍 强大的查询表达式（支持正则、字段提取、时间范围）
+- 📊 统计分析：Top N、频率分析、分布图
+- 🏃 交互式尾部模式，实时过滤新日志
+- 📤 导出为 CSV / JSON / Text
+- 🎯 零配置智能格式检测
+- 🔧 可配置、可扩展
 
 ## 🏃 快速开始
 
@@ -28,181 +27,127 @@
 git clone https://github.com/chensu1234/log-surgeon.git
 cd log-surgeon
 
+# 安装依赖
+pip install -r requirements.txt
+
 # 添加执行权限
-chmod +x bin/log-surgeon.sh
+chmod +x bin/log-surgeon
 ```
 
 ### 基本用法
 
 ```bash
-# 解析 Nginx 日志，输出 JSON
-./bin/log-surgeon.sh -f log/access.log -F nginx
+# 分析单个日志文件
+./bin/log-surgeon analyze access.log
 
-# 解析 JSON 日志文件
-./bin/log-surgeon.sh -f log/app.json -F json
+# 从标准输入读取
+cat app.log | ./bin/log-surgeon parse --format json
 
-# 实时监控 Nginx 访问日志
-tail -f /var/log/nginx/access.log | ./bin/log-surgeon.sh -F nginx --tail-mode
+# 过滤 error 级别日志
+./bin/log-surgeon query app.log --level error
 
-# 统计 Top 10 请求路径
-./bin/log-surgeon.sh -f log/access.log -F nginx --stats request --stats-limit 10
+# 正则过滤
+./bin/log-surgeon query app.log --regex "timeout|failed"
 
-# 过滤 500 错误
-./bin/log-surgeon.sh -f log/access.log -F nginx --filter-field status --filter-value "5[0-9]{2}"
+# 实时跟踪并过滤
+./bin/log-surgeon tail app.log --level warning
 
-# 输出为 CSV
-./bin/log-surgeon.sh -f log/access.log -F nginx -O csv
-```
+# 统计 Top N
+./bin/log-surgeon stats app.log --top 10 --field ip
 
-### 管道输入
-
-```bash
-# 从其他命令管道输入
-cat access.log | ./bin/log-surgeon.sh -F nginx -n 20
-
-# 与 grep 配合使用
-grep "ERROR" app.log | ./bin/log-surgeon.sh -F json
+# 组合过滤：时间范围 + 级别 + 关键词
+./bin/log-surgeon query app.log --level error --after "2026-04-01 00:00:00" --regex "database"
 ```
 
 ## ⚙️ 配置
 
-### 环境变量
+编辑 `config/surgeon.conf` 文件：
 
-| 变量 | 说明 | 默认值 |
-|------|------|--------|
-| `FORMAT` | 默认日志格式 | `nginx` |
-| `OUTPUT_FORMAT` | 默认输出格式 | `json` |
-| `CONFIG_FILE` | 自定义格式配置文件路径 | - |
+```ini
+[default]
+# 默认日志格式
+format = auto          # auto, syslog, json, nginx, apache, glibc, custom
 
-### 自定义格式配置
+# 时间格式（用于解析时间戳）
+time_format = %Y-%m-%d %H:%M:%S
 
-创建 `config/myformat.conf`:
+# 超时时间（秒）
+timeout = 5
 
-```bash
-name: my-app-format
-regex: ^\[([^\]]+)\] \[([^\]]+)\] \[([^\]]+)\] (.*)$
-field: timestamp
-field: level
-field: component
-field: message
-```
+# 输出颜色
+color = true
 
-使用自定义格式:
+[parser]
+# 自定义正则（用于 custom 格式）
+pattern = ^(?P<timestamp>\S+\s+\S+)\s+(?P<level>\w+)\s+(?P<message>.*)$
 
-```bash
-./bin/log-surgeon.sh -f app.log -c config/myformat.conf
+[output]
+# 默认导出格式
+export_format = text   # text, json, csv
+
+# 日志行数限制（0 = 无限制）
+limit = 1000
 ```
 
 ## 📋 命令行选项
 
-### 输入相关
-
 | 选项 | 说明 | 默认值 |
 |------|------|--------|
-| `-f, --file FILE` | 输入日志文件（为空则读取 stdin） | stdin |
-| `-c, --config FILE` | 自定义格式配置文件 | - |
-
-### 格式相关
-
-| 选项 | 说明 | 默认值 |
-|------|------|--------|
-| `-F, --format FMT` | 输入日志格式 | `nginx` |
-| `-O, --output FMT` | 输出格式: json, csv, table, raw | `json` |
-
-### 过滤相关
-
-| 选项 | 说明 |
-|------|------|
-| `--filter-field FIELD` | 按字段名过滤 |
-| `--filter-value REGEX` | 过滤值（支持正则） |
-| `-s, --status CODE` | 仅显示指定 HTTP 状态码 |
-
-### 统计相关
-
-| 选项 | 说明 | 默认值 |
-|------|------|--------|
-| `--stats FIELD` | 启用统计模式，按字段分组计数 | - |
-| `--stats-limit N` | 统计 TopN | `10` |
-
-### 限制相关
-
-| 选项 | 说明 |
-|------|------|
-| `-n, --head N` | 仅显示前 N 行 |
-| `-t, --tail N` | 仅显示后 N 行 |
-| `--tail-mode` | 实时 tail -f 模式 |
-
-### 输出相关
-
-| 选项 | 说明 |
-|------|------|
-| `-q, --quiet` | 静默模式，不输出元信息 |
-| `--no-color` | 禁用颜色输出 |
+| `analyze` | 分析日志文件结构 | - |
+| `parse` | 解析日志（使用指定格式） | - |
+| `query` | 查询/过滤日志 | - |
+| `tail` | 实时跟踪日志（带过滤） | - |
+| `stats` | 统计分析 | - |
+| `-f, --file` | 日志文件路径 | stdin |
+| `--format` | 日志格式 | auto |
+| `--level` | 按级别过滤 | - |
+| `--regex` | 正则表达式过滤 | - |
+| `--after` | 起始时间 | - |
+| `--before` | 结束时间 | - |
+| `--top` | Top N 统计数 | 10 |
+| `--field` | 统计字段 | - |
+| `--export` | 导出格式 | text |
+| `--output` | 输出文件路径 | stdout |
+| `--config` | 配置文件路径 | ./config/surgeon.conf |
+| `-h, --help` | 显示帮助 | - |
 
 ## 📁 项目结构
 
 ```
 log-surgeon/
 ├── bin/
-│   └── log-surgeon.sh          # 主脚本
+│   └── log-surgeon              # 主入口脚本
 ├── config/
-│   └── app-format.conf        # 自定义格式示例
-├── log/
-│   ├── access.log             # Nginx 示例日志
-│   ├── syslog.sample          # Syslog 示例日志
-│   └── app.json               # JSON 日志示例
+│   ├── surgeon.conf             # 主配置文件
+│   └── formats/                 # 格式定义
+│       └── patterns.conf
+├── log/                         # 日志目录（默认）
+│   └── .gitkeep
+├── samples/                     # 示例日志
+│   └── sample.log
+├── src/
+│   ├── __init__.py
+│   ├── cli.py                   # 命令行接口
+│   ├── parser.py                # 日志解析器
+│   ├── query.py                 # 查询引擎
+│   ├── stats.py                 # 统计分析
+│   ├── formatter.py             # 输出格式化
+│   └── config.py                # 配置管理
+├── tests/
+│   └── test_parser.py           # 单元测试
 ├── README.md
-└── LICENSE
+├── LICENSE
+└── requirements.txt
 ```
 
-## 🧩 支持的日志格式
+## 📝 示例日志
 
-### Nginx / Apache Combined
-
-输入:
-```
-192.168.1.100 - - [15/Apr/2026:10:30:00 +0800] "GET /api/users HTTP/1.1" 200 1234 "-" "Mozilla/5.0"
-```
-
-输出 (JSON):
-```json
-{"remote_addr": "192.168.1.100", "remote_user": "", "time_local": "15/Apr/2026:10:30:00 +0800", "request": "GET /api/users HTTP/1.1", "status": "200", "body_bytes_sent": "1234", "http_referer": "", "http_user_agent": "Mozilla/5.0"}
-```
-
-### Syslog (RFC 3164)
-
-输入:
-```
-Apr 15 10:30:00 web01 sshd[1234]: Accepted publickey for deploy from 10.0.0.50
-```
-
-输出 (JSON):
-```json
-{"timestamp": "Apr 15 10:30:00", "hostname": "web01", "program": "sshd[1234]", "message": "Accepted publickey for deploy from 10.0.0.50"}
-```
-
-### JSON Lines
-
-输入:
-```json
-{"level":"info","ts":"2026-04-15T10:30:00Z","msg":"Server started","port":8080}
-```
-
-输出: 保持原样（已是 JSON 格式）
-
-## 📝 CHANGELOG
-
-### [v1.0.0] - 2026-04-15
-
-- ✨ 初始版本
-- 🚀 支持 Nginx、Apache、Syslog、JSON、CSV 格式解析
-- 🔧 支持自定义正则格式配置
-- 🎯 字段过滤与正则匹配
-- 📊 统计分析模式（TopN 分组计数）
-- 🖥️ 实时 tail 模式
-- 📤 多格式输出（JSON、CSV、Table、Raw）
-- 🎨 彩色终端输出
+`samples/sample.log` 包含用于测试的示例数据。
 
 ## 📄 许可证
 
-本项目基于 [MIT 许可证](LICENSE) 开源。
+MIT License - 详见 [LICENSE](LICENSE) 文件
+
+## 👤 作者
+
+Chen Su
